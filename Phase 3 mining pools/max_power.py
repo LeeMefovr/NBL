@@ -95,7 +95,7 @@ def max_power_optimized(medals, N, ex_fee, up_fee, start_power, fm_fee, fm_power
                         break
 
                     fm_coff = fm_power[starships_num - 1] # 编队加成系数
-                    medals_select = sorted(fleet)[:medal_slot_num] # 按照勋章的等级从高到低质押
+                    medals_select = sorted(fleet, reverse=True)[:medal_slot_num] # 按照勋章的等级从高到低质押
                     medal_power = sum(medals_slot_power[medal_select] for medal_select in medals_select) # 勋章算力加成
                     starships_power = sum((start_power[fleet[i]][starship_up[i]] + medal_power) \
                                        * fm_coff * stake_NBL[str(starship_stake_NBL[i])] for i in range(8)) # 编队各星舰算力
