@@ -2,8 +2,9 @@ import numpy as np
 from itertools import product
 from itertools import permutations
 from collections import Counter
+import time
 
-def generate_fleets(medals):
+def generate_fleets(medals): # 生成所有可能的编队情况
     fleets = []
     for num_1 in range(medals[0] + 1):
         for num_2 in range(medals[1] + 1):
@@ -27,51 +28,45 @@ def generate_fleets(medals):
             final_fleets.append(fleet)
     return final_fleets
 
-def generate_stake_NBLs(stake_NBL):
+def generate_stake_NBLs(stake_NBL): # 所有可能的质押NBL情况
     stake_NBL = [int(key) for key in stake_NBL.keys()]
     all_stake_NBL = sorted(list(product(stake_NBL, repeat=8)), key=lambda x:sum(x))
     return all_stake_NBL
 
-def generate_starships_up():
+def generate_starships_up(): # 所有可能的升级星舰的情况
     all_starship_up = sorted(list(product([0, 1, 2, 3], repeat=8)), key=lambda x:sum(x))
     return all_starship_up
 
 def max_power_optimized(medals, N, ex_fee, up_fee, start_power, fm_fee, fm_power,
                         medals_slot_fee, medals_slot_power, stake_NBL):
     mining_power = 0  # 维护一个全局最大算力
-    # 生成所有可能的编队情况
     fleets = generate_fleets(medals)
-    starships_stake_NBLs = generate_stake_NBLs(stake_NBL) # 所有可能的质押NBL情况
-    starships_up = generate_starships_up() # 所有可能的升级星舰的情况
+    starships_stake_NBLs = generate_stake_NBLs(stake_NBL)
+    starships_up = generate_starships_up()
     nums = len(fleets) # 总的运行次数
     cal = 0  # 计数器
     for fleet in fleets:
         cal += 1
-        print("-" * 10 + f"当前进度{(cal / nums) * 100}%" + "-" * 10)
+        print("-" * 10 + "当前进度%.2f" % ((cal / nums) * 100) + "%"+ "-" * 10)
+        time.sleep(0.5)
         total_cost = 0 # 初始化当前编队花费NBL
         starships_up_fee = 0 # 初始化升级星舰的费用
         medals_slot_cost = 0 # 初始化开勋章槽费用
         starships_num = np.count_nonzero(fleet) # 星舰数
         if starships_num < 1:
             continue
-        if total_cost > N:
-            print("NBL不足以兑换星舰")
-            print("-" * 20)
+        if total_cost > N: # NBL不足以兑换星舰
             continue
         for medal_slot_num, medal_slot_fee in enumerate(medals_slot_fee[:min(starships_num + 1, 6)]):
             # if medal_slot_num < 1:
             #     continue
-            if total_cost > N:
-                print("NBL不足以开勋章槽")
-                print("-" * 20)
+            if total_cost > N: # NBL不足以开勋章槽
                 total_cost -= medals_slot_cost
                 break
             for starship_up in starships_up:
                 # if sum(starship_up) < 24:
                 #     continue
-                if total_cost > N:
-                    print("NBL不足以升级星舰")
-                    print("-" * 20)
+                if total_cost > N: # NBL不足以升级星舰
                     total_cost -= starships_up_fee
                     break
                 for starship_stake_NBL in starships_stake_NBLs:
@@ -96,8 +91,6 @@ def max_power_optimized(medals, N, ex_fee, up_fee, start_power, fm_fee, fm_power
                     stake_NBL_fee = np.dot(np.int64(np.array(fleet) > 0), starship_stake_NBL) # 质押NBL的数量
                     total_cost += stake_NBL_fee
                     if total_cost > N:
-                        # print("质押所需的NBL不足")
-                        # print("-" * 20)
                         total_cost -= stake_NBL_fee
                         break
 
