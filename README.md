@@ -4,5 +4,8 @@
 🚀官方网址：https://nebularevelation.com/
 
 ### ⚓内容  
-[三期矿池最大化算力方案](https://github.com/slowmist/Blockchain-dark-forest-selfguard-handbook)
+- 三期矿池最大化算力方案  
+  - [代码](https://github.com/LeeMefovr/NBL/tree/main/Phase%203%20mining%20pools)  
+  - [矿池详情(中文)](https://medium.com/@NebulaRevelation/三期矿池数据汇总-b0d507689b8c)
+
 
